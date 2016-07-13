@@ -20,7 +20,7 @@ public:
 	void clearVertexWeight(ofIndexType vertex_index);
 	void clearVertexWeight();
 	
-	void refreshWeightAutomatic(float distance_max);
+	void refreshWeightAutomatic(float distance_max, float strength=1, int num_joint_max=0);
 	
 	void update();
 	

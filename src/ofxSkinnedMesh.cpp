@@ -6,6 +6,7 @@
 //
 
 #include "ofxSkinnedMesh.h"
+#include <numeric>
 
 using namespace ofx::skinnedmesh;
 using namespace std;
@@ -43,23 +44,29 @@ void SkinnedMesh::clearVertexWeight()
 	weight_.clear();
 }
 
-void SkinnedMesh::refreshWeightAutomatic(float distance_max)
+void SkinnedMesh::refreshWeightAutomatic(float distance_max, float strength, int num_joint_max)
 {
 	for(int i = 0, num = getNumVertices(); i < num; ++i) {
 		const ofPoint &point = getVertex(i);
-		vector<float> distance;
-		float sum=0;
-		for_each(original_skeleton_.begin(), original_skeleton_.end(), [&distance,&point,&sum,&distance_max](const ofNode &node) {
-			float d = max(0.f,distance_max-node.getGlobalPosition().distance(point));
-			distance.emplace_back(d);
-			sum += d;
-		});
-		if(sum == 0) continue;
-		for(int j = 0, jnum = distance.size(); j < jnum; ++j) {
-			if(distance[j] > 0) {
-				addVertexWeight(i, j, distance[j]/sum);
+		typedef pair<int,float> value_type;
+		vector<value_type> score;
+		for(int j = 0, jnum = original_skeleton_.size(); j < jnum; ++j) {
+			const ofNode &node = original_skeleton_[j];
+			float distance = distance_max-node.getGlobalPosition().distance(point);
+			if(distance > 0) {
+				distance = pow(distance, strength);
+				score.emplace_back(make_pair(j, distance));
 			}
-		}
+		};
+		if(score.empty()) continue;
+		sort(score.begin(), score.end(), [](const value_type &a, const value_type &b) {
+			return a.second > b.second;
+		});
+		auto end_it = 0 < num_joint_max ? score.begin()+min<int>(num_joint_max,score.size()) : score.end();
+		float sum = accumulate(score.begin(), end_it, 0.f, [](float sum, const value_type &v) { return sum+v.second; });
+		for_each(score.begin(), end_it, [this,&i,&sum](const value_type &v) {
+			addVertexWeight(i, v.first, v.second/sum);
+		});
 	}
 }
 
