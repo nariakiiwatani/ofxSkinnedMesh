@@ -46,6 +46,7 @@ void SkinnedMesh::clearWeight()
 
 void SkinnedMesh::refreshWeightAutomatic(float distance_max, float strength, int num_joint_max)
 {
+	clearWeight();
 	for(int i = 0, num = getNumVertices(); i < num; ++i) {
 		const ofPoint &point = getVertex(i);
 		typedef pair<int,float> value_type;
