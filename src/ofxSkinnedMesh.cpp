@@ -22,9 +22,9 @@ void SkinnedMesh::setSkeleton(const vector<shared_ptr<ofNode>> &skeleton)
 	});
 }
 
-void SkinnedMesh::addVertexWeight(ofIndexType vertex_index, ofIndexType node_index, float weight)
+void SkinnedMesh::addWeight(ofIndexType vertex_index, ofIndexType node_index, float weight)
 {
-	auto result = weight_.insert(make_pair(vertex_index, map<ofIndexType,float>()));
+	auto result = weight_.insert(make_pair(vertex_index, unordered_map<ofIndexType,float>()));
 	if(result.second) {
 		result.first->second.insert(make_pair(node_index, weight));
 	}
@@ -35,11 +35,11 @@ void SkinnedMesh::addVertexWeight(ofIndexType vertex_index, ofIndexType node_ind
 		}
 	}
 }
-void SkinnedMesh::clearVertexWeight(ofIndexType vertex_index)
+void SkinnedMesh::clearWeight(ofIndexType vertex_index)
 {
 	weight_.erase(vertex_index);
 }
-void SkinnedMesh::clearVertexWeight()
+void SkinnedMesh::clearWeight()
 {
 	weight_.clear();
 }
@@ -65,7 +65,7 @@ void SkinnedMesh::refreshWeightAutomatic(float distance_max, float strength, int
 		auto end_it = 0 < num_joint_max ? score.begin()+min<int>(num_joint_max,score.size()) : score.end();
 		float sum = accumulate(score.begin(), end_it, 0.f, [](float sum, const value_type &v) { return sum+v.second; });
 		for_each(score.begin(), end_it, [this,&i,&sum](const value_type &v) {
-			addVertexWeight(i, v.first, v.second/sum);
+			addWeight(i, v.first, v.second/sum);
 		});
 	}
 }
@@ -75,26 +75,24 @@ void SkinnedMesh::refreshMesh()
 }
 void SkinnedMesh::update()
 {
-	for(int i = 0, num = getNumVertices(); i < num; ++i) {
-		auto it = weight_.find(i);
-		if(it != weight_.end()) {
-			ofPoint vertex(0,0,0);
-			ofVec3f normal(0,0,0);
-			for_each(it->second.begin(), it->second.end(), [this,&vertex,&normal,&i](const pair<ofIndexType,float> w) {
-				auto &deform = skeleton_[w.first];
-				auto &original = original_skeleton_[w.first];
-				auto &&transformMat = original.getGlobalTransformMatrix().getInverse() * deform->getGlobalTransformMatrix();
-				vertex += transformMat.preMult(getVertex(i)) * w.second;
-				if(hasNormals()) {
-					normal += transformMat.getRotate() * getNormal(i) * w.second;
-				}
-			});
-			deformed_.setVertex(i, vertex);
-			if(deformed_.hasNormals()) {
-				deformed_.setNormal(i, normal);
+	for_each(weight_.begin(), weight_.end(), [this](const pair<ofIndexType, unordered_map<ofIndexType,float>> &it) {
+		int vertex_index = it.first;
+		ofPoint vertex(0,0,0);
+		ofVec3f normal(0,0,0);
+		for_each(it.second.begin(), it.second.end(), [this,&vertex,&normal,&vertex_index](const pair<ofIndexType,float> w) {
+			auto &deform = skeleton_[w.first];
+			auto &original = original_skeleton_[w.first];
+			auto &&transformMat = original.getGlobalTransformMatrix().getInverse() * deform->getGlobalTransformMatrix();
+			vertex += transformMat.preMult(getVertex(vertex_index)) * w.second;
+			if(hasNormals()) {
+				normal += transformMat.getRotate() * getNormal(vertex_index) * w.second;
 			}
+		});
+		deformed_.setVertex(vertex_index, vertex);
+		if(deformed_.hasNormals()) {
+			deformed_.setNormal(vertex_index, normal);
 		}
-	}
+	});
 }
 
 ofMesh& SkinnedMesh::getDeformedMesh()

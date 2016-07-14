@@ -15,22 +15,21 @@ class SkinnedMesh : public ofMesh
 {
 public:
 	void setSkeleton(const std::vector<std::shared_ptr<ofNode>> &skeleton);
-	void refreshMesh();
 
-	void addVertexWeight(ofIndexType vertex_index, ofIndexType node_index, float weight);
-	void clearVertexWeight(ofIndexType vertex_index);
-	void clearVertexWeight();
+	void addWeight(ofIndexType vertex_index, ofIndexType node_index, float weight);
+	void clearWeight(ofIndexType vertex_index);
+	void clearWeight();
 	
 	void refreshWeightAutomatic(float distance_max, float strength=1, int num_joint_max=0);
 	
+	void refreshMesh();
 	void update();
-	
 	ofMesh& getDeformedMesh();
 	
 private:
 	std::vector<ofNode> original_skeleton_;
 	std::vector<std::shared_ptr<ofNode>> skeleton_;
-	std::map<ofIndexType, std::map<ofIndexType, float>> weight_;
+	std::unordered_map<ofIndexType, std::unordered_map<ofIndexType, float>> weight_;
 	ofMesh deformed_;
 };
 }}
