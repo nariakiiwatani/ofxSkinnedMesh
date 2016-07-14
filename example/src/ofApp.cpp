@@ -4,6 +4,7 @@
 void ofApp::setup(){
 	ofVec2f wsize(ofGetWidth(),ofGetHeight());
 	
+	// Set skeleton data
 	vector<shared_ptr<ofNode>> nodes;
 	for(int i = 0; i < 5; ++i) {
 		auto node = make_shared<ofNode>();
@@ -16,6 +17,7 @@ void ofApp::setup(){
 	nodes.at(4)->setPosition(wsize.x/2.f,wsize.y/2.f,0);
 	mesh_.setSkeleton(nodes);
 	
+	// Create mesh same as ofMesh
 	constexpr int div = 32;
 	for(int y = 0; y <= div; ++y) {
 		for(int x = 0; x <= div; ++x) {
@@ -34,7 +36,10 @@ void ofApp::setup(){
 			}
 		}
 	}
+	// Don't forget to call `refreshMesh` when you finish editing mesh
 	mesh_.refreshMesh();
+	
+	// Set weight
 	mesh_.refreshWeightAutomatic(wsize.length()/2.f, 2);
 	
 	ctrl_ = nodes[4];
@@ -42,12 +47,16 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+	// Move skeleton nodes
 	ctrl_->setPosition(ofGetMouseX(), ofGetMouseY(), 0);
+	
+	// Update mesh
 	mesh_.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+	// The return value of getDeformedMesh is a normal ofMesh
 	if(ofGetMousePressed()) {
 		mesh_.getDeformedMesh().drawWireframe();
 	}
