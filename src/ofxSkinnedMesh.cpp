@@ -100,3 +100,11 @@ ofMesh& SkinnedMesh::getDeformedMesh()
 {
 	return deformed_;
 }
+std::vector<std::shared_ptr<ofNode>>& SkinnedMesh::getSkeleton()
+{
+	return skeleton_;
+}
+std::unordered_map<ofIndexType, std::unordered_map<ofIndexType, float>>& SkinnedMesh::getWeight()
+{
+	return weight_;
+}

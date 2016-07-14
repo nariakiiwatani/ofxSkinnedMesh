@@ -26,6 +26,9 @@ public:
 	void update();
 	ofMesh& getDeformedMesh();
 	
+	std::vector<std::shared_ptr<ofNode>>& getSkeleton();
+	std::unordered_map<ofIndexType, std::unordered_map<ofIndexType, float>>& getWeight();
+	
 private:
 	std::vector<ofNode> original_skeleton_;
 	std::vector<std::shared_ptr<ofNode>> skeleton_;
