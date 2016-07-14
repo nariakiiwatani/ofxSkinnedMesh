@@ -18,7 +18,7 @@ void SkinnedMesh::setSkeleton(const vector<shared_ptr<ofNode>> &skeleton)
 	for_each(skeleton.begin(), skeleton.end(), [this](const shared_ptr<ofNode> &s) {
 		skeleton_.emplace_back(s);
 		original_skeleton_.emplace_back(*s);
-		original_skeleton_.back().clearParent();
+		original_skeleton_.back().clearParent(true);
 	});
 }
 
