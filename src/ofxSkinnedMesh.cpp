@@ -69,10 +69,12 @@ void SkinnedMesh::refreshWeightAutomatic(float distance_max, float strength, int
 		});
 	}
 }
-
-void SkinnedMesh::update()
+void SkinnedMesh::refreshMesh()
 {
 	deformed_ = *this;
+}
+void SkinnedMesh::update()
+{
 	for(int i = 0, num = getNumVertices(); i < num; ++i) {
 		auto it = weight_.find(i);
 		if(it != weight_.end()) {

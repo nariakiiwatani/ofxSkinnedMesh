@@ -34,6 +34,7 @@ void ofApp::setup(){
 			}
 		}
 	}
+	mesh_.refreshMesh();
 	mesh_.refreshWeightAutomatic(wsize.length()/2.f, 2);
 	
 	ctrl_ = nodes[4];

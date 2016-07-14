@@ -15,6 +15,7 @@ class SkinnedMesh : public ofMesh
 {
 public:
 	void setSkeleton(const std::vector<std::shared_ptr<ofNode>> &skeleton);
+	void refreshMesh();
 
 	void addVertexWeight(ofIndexType vertex_index, ofIndexType node_index, float weight);
 	void clearVertexWeight(ofIndexType vertex_index);
