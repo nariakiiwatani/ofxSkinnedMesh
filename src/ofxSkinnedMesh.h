@@ -24,10 +24,15 @@ public:
 	
 	void refreshMesh();
 	void update();
-	ofMesh& getDeformedMesh();
 	
-	std::vector<std::shared_ptr<ofNode>>& getSkeleton();
-	std::unordered_map<ofIndexType, std::unordered_map<ofIndexType, float>>& getWeight();
+	ofMesh& getDeformedMesh() { return deformed_; }
+	const ofMesh& getDeformedMesh() const { return deformed_; }
+	
+	std::vector<std::shared_ptr<ofNode>>& getSkeleton() { return skeleton_; }
+	const std::vector<std::shared_ptr<ofNode>>& getSkeleton() const { return skeleton_; }
+	
+	std::unordered_map<ofIndexType, std::unordered_map<ofIndexType, float>>& getWeight() { return weight_; }
+	const std::unordered_map<ofIndexType, std::unordered_map<ofIndexType, float>>& getWeight() const { return weight_; }
 	
 private:
 	std::vector<ofNode> original_skeleton_;
