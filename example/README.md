@@ -1,0 +1,1 @@
+![screenshot](https://raw.githubusercontent.com/nariakiiwatani/ofxSkinnedMesh/images/screenshot-example.png)
