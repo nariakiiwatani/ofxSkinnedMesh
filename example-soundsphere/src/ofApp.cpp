@@ -69,7 +69,7 @@ void ofApp::draw(){
 	mesh_.getDeformedMesh().draw();
 	mesh_.getDeformedMesh().drawWireframe();
 	ofPopStyle();
-//	for_each(nodes_.begin(), nodes_.end(), [](shared_ptr<ofNode> node) {node->draw();});
+	for_each(nodes_.begin(), nodes_.end(), [](shared_ptr<ofNode> node) {node->draw();});
 	camera_.end();
 }
 

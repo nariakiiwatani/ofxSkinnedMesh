@@ -31,6 +31,9 @@ public:
 	std::vector<std::shared_ptr<ofNode>>& getSkeleton() { return skeleton_; }
 	const std::vector<std::shared_ptr<ofNode>>& getSkeleton() const { return skeleton_; }
 	
+	std::vector<ofNode>& getOriginalSkeleton() { return original_skeleton_; }
+	const std::vector<ofNode>& getOriginalSkeleton() const { return original_skeleton_; }
+	
 	std::unordered_map<ofIndexType, std::unordered_map<ofIndexType, float>>& getWeight() { return weight_; }
 	const std::unordered_map<ofIndexType, std::unordered_map<ofIndexType, float>>& getWeight() const { return weight_; }
 	

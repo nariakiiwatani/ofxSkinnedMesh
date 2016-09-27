@@ -48,7 +48,8 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
 	// Move skeleton nodes
-	ctrl_->setPosition(ofGetMouseX(), ofGetMouseY(), 0);
+	ctrl_->setPosition(ofVec3f(ofGetMouseX(), ofGetMouseY(), 0));
+//	ctrl_->setOrientation(ofQuaternion(ofGetMouseX(), ofVec3f(0,1,0)));
 	
 	// Update mesh
 	mesh_.update();
