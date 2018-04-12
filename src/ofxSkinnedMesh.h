@@ -21,6 +21,9 @@ public:
 	void clearWeight();
 	
 	void refreshWeightAutomatic(float distance_max, float strength=1, int num_joint_max=0);
+	void refreshWeightAutomatic(vector<float> distance_max, float strength=1, int num_joint_max=0);
+	void refreshWeightAutomatic(float distance_max, vector<float> strength, int num_joint_max=0);
+	void refreshWeightAutomatic(vector<float> distance_max, vector<float> strength, int num_joint_max=0);
 	
 	void refreshMesh();
 	void update();

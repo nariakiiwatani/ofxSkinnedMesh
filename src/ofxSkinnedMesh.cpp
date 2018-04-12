@@ -46,6 +46,24 @@ void SkinnedMesh::clearWeight()
 
 void SkinnedMesh::refreshWeightAutomatic(float distance_max, float strength, int num_joint_max)
 {
+	refreshWeightAutomatic(vector<float>(skeleton_.size(), distance_max), vector<float>(skeleton_.size(), strength), num_joint_max);
+}
+void SkinnedMesh::refreshWeightAutomatic(vector<float> distance_max, float strength, int num_joint_max)
+{
+	refreshWeightAutomatic(distance_max, vector<float>(skeleton_.size(), strength), num_joint_max);
+}
+void SkinnedMesh::refreshWeightAutomatic(float distance_max, vector<float> strength, int num_joint_max)
+{
+	refreshWeightAutomatic(vector<float>(skeleton_.size(), distance_max), strength, num_joint_max);
+}
+void SkinnedMesh::refreshWeightAutomatic(vector<float> distance_max, vector<float> strength, int num_joint_max)
+{
+	if(distance_max.size() < skeleton_.size()) {
+		distance_max.insert(end(distance_max), skeleton_.size()-distance_max.size(), distance_max.empty()?1:distance_max.back());
+	}
+	if(strength.size() < skeleton_.size()) {
+		strength.insert(end(strength), skeleton_.size()-strength.size(), strength.empty()?1:strength.back());
+	}
 	clearWeight();
 	for(int i = 0, num = getNumVertices(); i < num; ++i) {
 		const ofPoint &point = getVertex(i);
@@ -53,9 +71,9 @@ void SkinnedMesh::refreshWeightAutomatic(float distance_max, float strength, int
 		vector<value_type> score;
 		for(int j = 0, jnum = original_skeleton_.size(); j < jnum; ++j) {
 			const ofNode &node = original_skeleton_[j];
-			float distance = distance_max-node.getGlobalPosition().distance(point);
+			float distance = distance_max[j]-node.getGlobalPosition().distance(point);
 			if(distance > 0) {
-				distance = pow(distance, strength);
+				distance = pow(distance, strength[j]);
 				score.emplace_back(make_pair(j, distance));
 			}
 		};
