@@ -71,7 +71,7 @@ void SkinnedMesh::refreshWeightAutomatic(vector<float> distance_max, vector<floa
 		vector<value_type> score;
 		for(int j = 0, jnum = original_skeleton_.size(); j < jnum; ++j) {
 			const ofNode &node = original_skeleton_[j];
-			float distance = distance_max[j]-node.getGlobalPosition().distance(point);
+			float distance = distance_max[j]-glm::distance(node.getGlobalPosition(), glm::vec3(point));
 			if(distance > 0) {
 				distance = pow(distance, strength[j]);
 				score.emplace_back(make_pair(j, distance));
@@ -101,10 +101,10 @@ void SkinnedMesh::update()
 		for_each(it.second.begin(), it.second.end(), [this,&vertex,&normal,&vertex_index](const pair<ofIndexType,float> w) {
 			auto &deform = skeleton_[w.first];
 			auto &original = original_skeleton_[w.first];
-			auto &&transformMat = original.getGlobalTransformMatrix().getInverse() * deform->getGlobalTransformMatrix();
-			vertex += transformMat.preMult(getVertex(vertex_index)) * w.second;
+			auto &&transformMat = glm::inverse(original.getGlobalTransformMatrix()) * deform->getGlobalTransformMatrix();
+			vertex += transformMat * glm::vec4(getVertex(vertex_index),1) * w.second;
 			if(hasNormals()) {
-				normal += transformMat.getRotate() * getNormal(vertex_index) * w.second;
+				normal += glm::mat3(transformMat) * getNormal(vertex_index) * w.second;
 			}
 		});
 		deformed_.setVertex(vertex_index, vertex);
