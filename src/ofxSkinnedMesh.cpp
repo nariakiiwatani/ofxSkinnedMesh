@@ -108,7 +108,7 @@ void SkinnedMesh::update()
 		for_each(it.second.begin(), it.second.end(), [this,&vertex,&normal,&vertex_index](const pair<ofIndexType,float> w) {
 			auto &deform = skeleton_[w.first];
 			auto &original = original_skeleton_[w.first];
-			auto &&transformMat = glm::inverse(original.getGlobalTransformMatrix()) * deform->getGlobalTransformMatrix();
+			auto &&transformMat = deform->getGlobalTransformMatrix() * glm::inverse(original.getGlobalTransformMatrix());
 			vertex += transformMat * glm::vec4(getVertex(vertex_index),1) * w.second;
 			if(hasNormals()) {
 				normal += glm::mat3(transformMat) * getNormal(vertex_index) * w.second;
