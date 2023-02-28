@@ -15,6 +15,7 @@ namespace ofx { namespace skinnedmesh {
 class SkinnedMesh : public ofMesh
 {
 public:
+	void addNode(std::shared_ptr<ofNode> node);
 	void setSkeleton(const std::vector<std::shared_ptr<ofNode>> &skeleton);
 
 	void addWeight(ofIndexType vertex_index, ofIndexType node_index, float weight);

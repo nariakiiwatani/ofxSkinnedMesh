@@ -11,6 +11,13 @@
 using namespace ofx::skinnedmesh;
 using namespace std;
 
+void SkinnedMesh::addNode(std::shared_ptr<ofNode> node)
+{
+	skeleton_.emplace_back(node);
+	original_skeleton_.emplace_back(*node);
+	original_skeleton_.back().clearParent(true);
+}
+
 void SkinnedMesh::setSkeleton(const vector<shared_ptr<ofNode>> &skeleton)
 {
 	skeleton_.clear();
