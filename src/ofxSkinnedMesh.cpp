@@ -72,13 +72,18 @@ void SkinnedMesh::refreshWeightAutomatic(vector<float> distance_max, vector<floa
 		strength.insert(end(strength), skeleton_.size()-strength.size(), strength.empty()?1:strength.back());
 	}
 	clearWeight();
+	auto dist = [](glm::vec3 a, glm::vec3 b) {
+		auto s = b-a;
+		return std::sqrt(s.x*s.x+s.y*s.y+s.z*s.z);
+	};
 	for(int i = 0, num = getNumVertices(); i < num; ++i) {
-		const ofPoint &point = getVertex(i);
+		const glm::vec3 &point = getVertex(i);
 		typedef pair<int,float> value_type;
 		vector<value_type> score;
 		for(int j = 0, jnum = original_skeleton_.size(); j < jnum; ++j) {
 			const ofNode &node = original_skeleton_[j];
-			float distance = distance_max[j]-glm::distance(node.getGlobalPosition(), glm::vec3(point));
+			glm::vec3 node_pos{node.getX(),node.getY(),node.getZ()};
+			float distance = distance_max[j]-dist(node_pos, point);
 			if(distance > 0) {
 				distance = pow(distance, strength[j]);
 				score.emplace_back(make_pair(j, distance));
@@ -103,13 +108,13 @@ void SkinnedMesh::update()
 {
 	for_each(weight_.begin(), weight_.end(), [this](const pair<ofIndexType, unordered_map<ofIndexType,float>> &it) {
 		int vertex_index = it.first;
-		ofPoint vertex(0,0,0);
-		ofVec3f normal(0,0,0);
+		glm::vec3 vertex(0,0,0);
+		glm::vec3 normal(0,0,0);
 		for_each(it.second.begin(), it.second.end(), [this,&vertex,&normal,&vertex_index](const pair<ofIndexType,float> w) {
 			auto &deform = skeleton_[w.first];
 			auto &original = original_skeleton_[w.first];
 			auto &&transformMat = deform->getGlobalTransformMatrix() * glm::inverse(original.getGlobalTransformMatrix());
-			vertex += transformMat * glm::vec4(getVertex(vertex_index),1) * w.second;
+			vertex += glm::vec3(transformMat * glm::vec4(getVertex(vertex_index),1) * w.second);
 			if(hasNormals()) {
 				normal += glm::mat3(transformMat) * getNormal(vertex_index) * w.second;
 			}
